@@ -13,9 +13,9 @@ class BusinessController extends Controller
     public $user;
 
     public function __construct(){
+        $this->middleware('auth_api');
         $this->user = request()->user('auth_api');
 
-        $this->middleware('auth');
     }
 
     //list businesses
