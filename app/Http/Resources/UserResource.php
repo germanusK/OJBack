@@ -14,8 +14,6 @@ class UserResource extends JsonResource
      */
     public function toArray($request)
     {
-        return array_filter(parent::toArray($request), function($item, $key){
-            if($key != 'password');
-        });
+        return parent::toArray($request);
     }
 }

@@ -15,24 +15,20 @@ use App\Http\Controllers;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
 
 Route::post('login', [Controllers\API\AuthController::class, 'login']);
+Route::post('logout', [Controllers\API\AuthController::class, 'logout']);
 Route::post('register', [Controllers\API\AuthController::class, 'register']);
 Route::post('forgot_password', [Controllers\API\AuthController::class, 'forgot_password']);
 Route::post('validate_otp', [Controllers\API\AuthController::class, 'validate_otp']);
 Route::post('reset_password', [Controllers\API\AuthController::class, 'reset_password']);
 
 
-Route::prefix('user')->group(function(){
-    Route::get('customers', [Controllers\API\UserController::class, 'customers'])->middleware('auth');
+Route::prefix('user')->middleware('auth_api')->group(function(){
+    Route::get('customers', [Controllers\API\UserController::class, 'customers']);
     Route::get('vendors', [Controllers\API\UserController::class, 'vendors']);
-    Route::middleware(['auth', 'admin'])->group(function(){
-        Route::get('admins', [Controllers\API\UserController::class, 'admins']);
-        Route::get('stats', [Controllers\API\UserController::class, 'statistics']);
-    });
+    Route::get('admins', [Controllers\API\UserController::class, 'admins']);
+    Route::get('stats', [Controllers\API\UserController::class, 'statistics']);
     Route::get('profile/{id}', [Controllers\API\UserController::class, 'show'])->middleware('auth');
     Route::post('profile/{id}', [Controllers\API\UserController::class, 'update'])->middleware('auth');
     Route::post('change_password', [Controllers\API\UserController::class, 'change_password'])->middleware('auth');

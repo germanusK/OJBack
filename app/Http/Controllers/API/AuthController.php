@@ -25,7 +25,14 @@ class AuthController extends Controller
 
     // user creation action
     public function register(Request $request){
-        $request->validate(['name' => 'required', 'tel' => 'required|string|min:9|unique:users,tel', 'password'=>'required|min:6', 'confirm_password'=>'required|same:password', 'email'=>'nullable|email|unique:users,email', 'type'=>'nullable']);
+        $request->validate([
+            'name' => 'required', 
+            'tel' => 'required|string|min:9|unique:users,tel', 
+            'email'=>'nullable|email|unique:users,email', 
+            'type'=>'nullable',
+            'password'=>'required|min:6', 
+            'confirm_password'=>'required|same:password', 
+        ]);
 
         $data = [
             'name'=>$request->name, 'email' => $request->email, 'type' => $request->type, 'password' => Hash::make($request->password), 'code' => $request->code
@@ -51,22 +58,38 @@ class AuthController extends Controller
 
     // user login
     public function login(Request $request){
-        $request->validate(['tel'=>'required', 'password'=>'required|min:6']);
-
-        $user = User::where('tel', $request->tel)->first();
-        if(isset($user) and Hash::check($request->password, $user->password)){
-            $token = $user->createToken('authToken')->accessToken;
-            $data = [
-                'user' => new UserResource($user),
-                'token' => $token,
-                'message' => 'success'
-            ];
-            return response()->json($data, 200);
+        try {
+            //code...
+            $request->validate(['tel'=>'required', 'password'=>'required|min:6']);
+    
+            $user = User::where('tel', $request->tel)->first();
+            if(isset($user) and Hash::check($request->password, $user->password)){
+                $token = $user->createToken('authToken')->accessToken;
+                $data = [
+                    'user' => new UserResource($user),
+                    'token' => $token,
+                    'message' => 'success'
+                ];
+                return response()->json($data, 200);
+            }
+            if(isset($user)){
+                return response()->json(['message' => 'Could not login user. Wrong username or password'], 400);
+            }else{
+                return response()->json(['message' => 'Could not login user. No account exists with given username or password'], 400);
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json(['message' => 'Operation failed. '.$th->getMessage()], 400);          
         }
-        if(isset($user)){
-            return response()->json(['message' => 'Could not login user. Wrong username or password'], 400);
-        }else{
-            return response()->json(['message' => 'Could not login user. No account exists with given username or password'], 400);
+    }
+
+
+    public function logout(Request $request){
+        $user = $request->user('auth_api');
+        if($user != null){
+            $token = $user->token();
+            $token->revoke();
+            return response()->json(['status' => 200]);
         }
     }
 

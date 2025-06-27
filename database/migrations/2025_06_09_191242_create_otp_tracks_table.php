@@ -17,8 +17,8 @@ return new class extends Migration
             $table->id();
             $table->string('otp');
             $table->integer('user_id');
-            $table->timestamp('created_at');
-            $table->timestamp('expires_at');
+            $table->timestamp('created_at')->nullable();
+            $table->timestamp('expires_at')->nullable();
             $table->boolean('used')->default(0);
         });
     }
