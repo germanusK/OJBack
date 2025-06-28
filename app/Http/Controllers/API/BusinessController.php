@@ -26,9 +26,9 @@ class BusinessController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request){
-        $businesses = Business::where(['is_approved', 1]);
+        $businesses = Business::where(['is_approved'=> 1]);
         if($request->is_approved == 0){
-            $businesses = Business::where(['is_approved', 0]);
+            $businesses = Business::where(['is_approved'=> 0]);
         }
         if(!empty($request->user_id)){
             $businesses = $businesses->where('user_id', $request->user_id);
@@ -79,11 +79,15 @@ class BusinessController extends Controller
      */
     public function create(Request $request){
         $request->validate([
-            'name' => 'required', 'address' => 'required', 'tel' => 'required',
-            'user_id' => 'required', 'category_id' => 'required', 'email' => 'email'
+            'name' => 'required', 
+            'address' => 'required', 
+            'tel' => 'required',
+            'user_id' => 'required', 
+            'category_id' => 'required', 
+            'email' => 'email'
         ]);
 
-        if(Business::where(['tel'=> $request->tel, 'name' => $request->name])->count() < 0){
+        if(Business::where(['tel'=> $request->tel, 'name' => $request->name])->count() > 0){
             $message = "A business with the same name and contact phone number already exists. Consider changing the name or providing a different contact number";
             return response()->json(['data' => null, 'message' => $message], 400);
         }
@@ -91,7 +95,7 @@ class BusinessController extends Controller
         $data = [
             'name' => $request->name, 'address' => $request->address, 'tel' => $request->tel, 'user_id' => $request->user_id,
             'category_id' => $request->category_id, 'email' => $request->email, 'is_approved' => request('is_approved', 0), 
-            'whatsapp' => $request->whatsapp
+            'whatsapp' => $request->whatsapp, 'business_id' => $request->business_id??0
         ];
 
 

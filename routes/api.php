@@ -29,9 +29,9 @@ Route::prefix('user')->middleware('auth_api')->group(function(){
     Route::get('vendors', [Controllers\API\UserController::class, 'vendors']);
     Route::get('admins', [Controllers\API\UserController::class, 'admins']);
     Route::get('stats', [Controllers\API\UserController::class, 'statistics']);
-    Route::get('profile/{id}', [Controllers\API\UserController::class, 'show'])->middleware('auth');
-    Route::post('profile/{id}', [Controllers\API\UserController::class, 'update'])->middleware('auth');
-    Route::post('change_password', [Controllers\API\UserController::class, 'change_password'])->middleware('auth');
+    Route::get('profile/{id}', [Controllers\API\UserController::class, 'show']);
+    Route::post('profile/{id}', [Controllers\API\UserController::class, 'update']);
+    Route::post('change_password', [Controllers\API\UserController::class, 'change_password']);
     Route::get('search', [Controllers\API\UserController::class, 'search']);
 });
 
@@ -39,12 +39,11 @@ Route::prefix('businesses')->group(function(){
     Route::get('index', [Controllers\API\BusinessController::class, 'index']);
     Route::get('show/{id}', [Controllers\API\BusinessController::class, 'show']);
     Route::get('search', [Controllers\API\BusinessController::class, 'search']);
-    Route::middleware('auth')->group(function(){
-        Route::post('create', [Controllers\API\BusinessController::class, 'create']);
-        Route::post('update/{id}', [Controllers\API\BusinessController::class, 'update']);
-        Route::post('update_logo/{id}', [Controllers\API\ImageController::class, 'upload_business_logo']);
-        Route::post('delete/{id}', [Controllers\API\BusinessController::class, 'delete']);
-    });
+    Route::post('create', [Controllers\API\BusinessController::class, 'create']);
+    Route::post('update/{id}', [Controllers\API\BusinessController::class, 'update']);
+    Route::post('update_logo/{id}', [Controllers\API\ImageController::class, 'upload_business_logo']);
+    Route::post('delete/{id}', [Controllers\API\BusinessController::class, 'delete']);
+    
 });
 
 Route::prefix('products')->group(function(){
